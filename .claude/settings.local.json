@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet --version)",
+      "Bash(npm --version)",
+      "Bash(nvm use:*)",
+      "Bash(dotnet new:*)",
+      "Bash(dotnet add:*)",
+      "Bash(cmd.exe /c \"node --version && npm --version\")",
+      "Bash(dotnet ef:*)",
+      "Bash(dotnet build:*)",
+      "Bash(cmd.exe /c \"node --version && npx --version\")",
+      "Bash(export PATH=\"$PATH:/c/Program Files/nodejs\")",
+      "Bash(npx create-next-app@latest relay-web --typescript --tailwind --eslint --app --src-dir --no-turbopack --import-alias \"@/*\" --yes)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(cmd.exe /c \"winget --version\")",
+      "Bash(cmd.exe /c \"winget install --id Gyan.FFmpeg -e --accept-source-agreements --accept-package-agreements\")",
+      "Bash(powershell.exe -Command \"& 'C:\\\\Users\\\\Blake\\\\ffmpeg\\\\bin\\\\ffmpeg.exe' -version 2>&1 | Select-Object -First 3\")",
+      "Bash(head -30 /c/Users/Blake/Documents/GitHub/Relay/relay-server/Migrations/*_AddLibraryAccess.cs)",
+      "Bash(npx tsc:*)",
+      "Bash(npm uninstall:*)"
+    ]
+  }
+}
