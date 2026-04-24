@@ -1,0 +1,76 @@
+services:
+  relay-server:
+    build:
+      context: ./relay-server
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ${MEDIA_PATH:-/mnt/media}:/media:ro
+      - relay-config:/config
+    environment:
+      - ConnectionStrings__Default=Data Source=/config/relay.db
+      - Jwt__Secret=${JWT_SECRET:?JWT_SECRET must be set in .env}
+      - Transcode__CacheDir=/config/transcode-cache
+      - Transcode__Encoder=${ENCODER:-auto}
+      - FrontendUrl=http://relay-web:3000
+    depends_on:
+      - whisper
+    restart: unless-stopped
+    # ── GPU passthrough ─────────────────────────────────────────────────────
+    # NVIDIA: uncomment the deploy block below and ensure nvidia-container-toolkit
+    # is installed on the host (https://docs.nvidia.com/datacenter/cloud-native/container-toolkit)
+    #
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu, video]
+    #
+    # AMD: uncomment the devices block below. The render node path may vary —
+    # check with `ls /dev/dri` on your host. ROCm is not required for VAAPI/AMF.
+    #
+    # devices:
+    #   - /dev/dri/renderD128:/dev/dri/renderD128
+    #
+    # CPU-only: no changes needed — libx264 is the auto-detected fallback.
+
+  relay-web:
+    build:
+      context: ./relay-web
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=${API_URL:-http://relay-server:5000}
+    depends_on:
+      - relay-server
+    restart: unless-stopped
+
+  whisper:
+    # Local Whisper ASR — generates subtitles for home media videos.
+    # Uses faster-whisper for speed. Model is downloaded on first run
+    # and cached in the whisper-models volume.
+    image: onerahmet/openai-whisper-asr-webservice:latest
+    ports:
+      - "9000:9000"
+    environment:
+      - ASR_MODEL=${WHISPER_MODEL:-base}
+      - ASR_ENGINE=faster_whisper
+    volumes:
+      - whisper-models:/root/.cache/whisper
+    restart: unless-stopped
+    # For GPU-accelerated Whisper (NVIDIA only), also uncomment:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+volumes:
+  relay-config:
+  whisper-models:

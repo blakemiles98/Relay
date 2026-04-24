@@ -1,0 +1,18 @@
+# Secrets
+.env
+.env.local
+
+# .NET
+relay-server/bin/
+relay-server/obj/
+relay-server/*.db
+relay-server/*.db-shm
+relay-server/*.db-wal
+
+# Next.js
+relay-web/node_modules/
+relay-web/.next/
+relay-web/.env.local
+
+# Docker
+relay-web/public/icons/*.png
